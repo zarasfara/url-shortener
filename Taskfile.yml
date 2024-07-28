@@ -1,5 +1,7 @@
 version: "3"
 
+dotenv: ['.env']
+
 tasks:
   run:
     cmds:
@@ -9,9 +11,4 @@ tasks:
         else
           go run cmd/url-shortener/main.go
         fi
-    silent: true
-
-  hello:
-    cmds:
-      - echo "Using $DB_HOST"
     silent: true

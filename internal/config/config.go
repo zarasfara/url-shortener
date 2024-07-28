@@ -15,7 +15,7 @@ type (
 
 	httpConfig struct {
 		Address string `yaml:"address"`
-		Port    int    `yaml:"port"`
+		Port    string `yaml:"port"`
 	}
 
 	dbConfig struct {
@@ -33,7 +33,6 @@ func MustLoad(env string) *Config {
 
 	configPath := fmt.Sprintf("./configs/%s.yml", env)
 
-	// read configuration from file and environment variables
 	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
 		log.Fatalf("can't read config: %s", err)
 	}
