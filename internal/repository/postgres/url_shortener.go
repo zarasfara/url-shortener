@@ -1,19 +1,14 @@
-package repository
+package postgres
 
 import (
 	"database/sql"
 	"errors"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/zarasfara/url-shortener/internal/database/postgres"
+	repoErrors "github.com/zarasfara/url-shortener/internal/repository/errors"
 )
-
-var aliasAlreadyExists = errors.New("alias already exists")
-
-type UrlShortenerStorage interface {
-	SaveUrl(url, alias string) error
-	GetURL(alias string) (string, error)
-}
 
 type UrlShortenerRepository struct {
 	db *sql.DB
@@ -37,7 +32,7 @@ func (us *UrlShortenerRepository) SaveUrl(url, alias string) error {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			if pgErr.Code == "23505" {
-				return aliasAlreadyExists
+				return repoErrors.ErrAliasAlreadyExists
 			}
 		}
 		return err
