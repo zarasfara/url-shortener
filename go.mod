@@ -3,11 +3,15 @@ module github.com/zarasfara/url-shortener
 go 1.22.4
 
 require (
+	github.com/go-chi/chi/v5 v5.1.0
+	github.com/go-chi/render v1.0.3
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/joho/godotenv v1.5.1
+	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 )
 
 require (
+	github.com/ajg/form v1.5.1 // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
 	github.com/kr/text v0.1.0 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect

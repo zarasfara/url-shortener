@@ -8,6 +8,6 @@ type Repository struct {
 
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
-		UrlShortenerStorage: NewUrlShortener(db),
+		UrlShortenerStorage: NewUrlShortenerRepository(db),
 	}
 }

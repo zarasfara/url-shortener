@@ -13,6 +13,10 @@ import (
 	"github.com/zarasfara/url-shortener/internal/logger/sl"
 )
 
+const (
+	UrlsTable = "urls"
+)
+
 func New(cfg config.Config, logger *slog.Logger) *sql.DB {
 
 	connURL := &url.URL{

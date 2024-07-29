@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - 8080:8080
     depends_on:
       - postgres
 
@@ -15,5 +15,11 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "12000:5432"
+      - 12000:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 12002:8080
 

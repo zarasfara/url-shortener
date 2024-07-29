@@ -1,15 +1,12 @@
-// main.go
 package main
 
 import (
+	urlshortener "github.com/zarasfara/url-shortener/internal/app/url-shortener"
 	"log"
-	"log/slog"
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/zarasfara/url-shortener/internal/config"
-	"github.com/zarasfara/url-shortener/internal/repository"
-	"github.com/zarasfara/url-shortener/internal/storage/postgres"
+	"log/slog"
 )
 
 const (
@@ -21,53 +18,36 @@ const (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatalf("Error loading .env file: %v", err)
 	}
 
 	env := os.Getenv("APP_ENV")
 	if env == "" {
-		env = envLocal
+		env = envDev
 	}
 
-	// init logger
-	log := setupLogger(env)
+	logger := setupLogger(env)
 
-	// init config
-	cfg := config.MustLoad(env)
-	log.Info("starting url-shortener", slog.String("env", env))
-	log.Debug("debug messages are enabled")
-
-	// init storage: postgres
-	db := postgres.New(*cfg, log)
-
-	// init repositories
-	_ = repository.NewRepository(db)
-
-	// TODO: init services
-
-	// TODO: init router: chi
-
-	// TODO: init server
+	urlshortener.Run(env, logger)
 }
 
 func setupLogger(env string) *slog.Logger {
-
-	var log *slog.Logger
+	var logger *slog.Logger
 
 	switch env {
 	case envLocal:
-		log = slog.New(
+		logger = slog.New(
 			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
 		)
 	case envDev:
-		log = slog.New(
+		logger = slog.New(
 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
 		)
 	case envProd:
-		log = slog.New(
+		logger = slog.New(
 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
 		)
 	}
 
-	return log
+	return logger
 }
