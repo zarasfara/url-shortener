@@ -1,6 +1,15 @@
 package repository
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/zarasfara/url-shortener/internal/repository/postgres"
+)
+
+type UrlShortenerStorage interface {
+	SaveUrl(url, alias string) error
+	GetURL(alias string) (string, error)
+}
 
 type Repository struct {
 	UrlShortenerStorage
@@ -8,6 +17,6 @@ type Repository struct {
 
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
-		UrlShortenerStorage: NewUrlShortenerRepository(db),
+		UrlShortenerStorage: postgres.NewUrlShortenerRepository(db),
 	}
 }
