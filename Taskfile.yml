@@ -3,12 +3,23 @@ version: "3"
 dotenv: ['.env']
 
 tasks:
-  run:
+  init:
+    cmds: 
+      - cp .env.sample .env
+    silent: true
+
+  docker-run:
+    cmd: docker-compose up -d
+    silent: true
+
+  migrate-up:
     cmds:
-      - |
-        if [ -n "{{.CONFIG_PATH}}" ]; then
-          go run cmd/url-shortener/main.go -config={{.CONFIG_PATH}}
-        else
-          go run cmd/url-shortener/main.go
-        fi
+      - echo "Running migrations..."
+      - docker run --rm -v ./migrations:/migrations --network host migrate/migrate -path=/migrations/ -database postgres://root:password@localhost:12000/pet_adoption_platform?sslmode=disable up
+    silent: true
+    
+  migrate-down:
+    cmds:
+      - echo "Rolling back migrations..."
+      - docker run --rm -v ./migrations:/migrations --network host migrate/migrate -path=/migrations/ -database postgres://root:password@localhost:12000/pet_adoption_platform?sslmode=disable down -all
     silent: true
