@@ -3,6 +3,7 @@ package url_shortener
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -13,6 +14,7 @@ import (
 	"github.com/zarasfara/url-shortener/internal/config"
 	"github.com/zarasfara/url-shortener/internal/database/postgres"
 	"github.com/zarasfara/url-shortener/internal/handlers"
+	"github.com/zarasfara/url-shortener/internal/logger/sl"
 	"github.com/zarasfara/url-shortener/internal/repository"
 	"github.com/zarasfara/url-shortener/internal/server"
 	"github.com/zarasfara/url-shortener/internal/service"
@@ -42,10 +44,10 @@ func Run(env string, logger *slog.Logger) {
 	srv := server.NewServer(cfg, router)
 
 	go func() {
-		logger.Info("server is starting", slog.String("address", cfg.HTTP.Address))
+		logger.Info("server is starting", slog.String("address", fmt.Sprintf("%s:%s", cfg.HTTP.Address, cfg.HTTP.Port)))
 
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			logger.Error("server failed to start", err)
+			logger.Error("server failed to start", sl.Err(err))
 		}
 	}()
 
@@ -59,7 +61,7 @@ func Run(env string, logger *slog.Logger) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		logger.Error("server forced to shutdown", err)
+		logger.Error("server forced to shutdown", sl.Err(err))
 	}
 
 	logger.Info("server exiting")

@@ -31,7 +31,7 @@ func newUrlShortenerService(repo repository.UrlShortenerStorage) UrlShortenerSer
 
 func isValidURL(inputURL string) bool {
 	_, err := url.ParseRequestURI(inputURL)
-	return err == nil && inputURL != ""
+	return err == nil
 }
 
 func (s *urlShortenerService) SaveUrl(url string) (string, error) {

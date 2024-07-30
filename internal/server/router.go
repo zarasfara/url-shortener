@@ -16,6 +16,9 @@ func NewRouter(handler *handlers.Handler) http.Handler {
 
 	// Public routes
 	r.Get("/", handler.HelloWorld)
+	r.Get("/qrcode/{alias}", handler.DisplayQRCode)
+	r.Get("/qr/{short-url}", handler.GetQRCode)
+
 	r.Get("/{short-url}", handler.Redirect)
 
 	r.Route("/api", func(api chi.Router) {
