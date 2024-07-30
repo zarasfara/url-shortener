@@ -16,6 +16,7 @@ func NewRouter(handler *handlers.Handler) http.Handler {
 
 	// Public routes
 	r.Get("/", handler.HelloWorld)
+	r.Get("/{short-url}", handler.Redirect)
 
 	r.Route("/api", func(api chi.Router) {
 		api.Route("/v1", func(v1 chi.Router) {

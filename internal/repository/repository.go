@@ -8,7 +8,7 @@ import (
 
 type UrlShortenerStorage interface {
 	SaveUrl(url, alias string) error
-	GetURL(alias string) (string, error)
+	GetUrl(alias string) (string, error)
 }
 
 type Repository struct {

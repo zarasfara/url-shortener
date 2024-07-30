@@ -9,7 +9,7 @@ tasks:
     silent: true
 
   docker-run:
-    cmd: docker-compose up -d
+    cmd: docker-compose up -d --build
     silent: true
 
   migrate-up:
