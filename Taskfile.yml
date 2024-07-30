@@ -4,7 +4,8 @@ dotenv: ['.env']
 
 tasks:
   init:
-    cmd: cp .env.sample .env
+    cmds: 
+      - cp .env.sample .env
     silent: true
 
   docker-run:
@@ -12,14 +13,13 @@ tasks:
     silent: true
 
   migrate-up:
-    dir: '{{.USER_WORKING_DIR}}'
     cmds:
       - echo "Running migrations..."
-      - docker run --rm -v ./migrations:/migrations --network=host migrate/migrate -path=/migrations/ -database postgres://root:password@localhost:12000/pet_adoption_platform?sslmode=disable up
-#    silent: true
-
+      - docker run --rm -v ./migrations:/migrations --network host migrate/migrate -path=/migrations/ -database postgres://root:password@localhost:12000/pet_adoption_platform?sslmode=disable up
+    silent: true
+    
   migrate-down:
     cmds:
       - echo "Rolling back migrations..."
-      - docker-compose exec app php artisan migrate:rollback
+      - docker run --rm -v ./migrations:/migrations --network host migrate/migrate -path=/migrations/ -database postgres://root:password@localhost:12000/pet_adoption_platform?sslmode=disable down -all
     silent: true
