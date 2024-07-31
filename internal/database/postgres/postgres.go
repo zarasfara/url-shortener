@@ -18,7 +18,6 @@ const (
 )
 
 func New(cfg config.Config, logger *slog.Logger) *sql.DB {
-
 	connURL := &url.URL{
 		Scheme: "postgres",
 		User:   url.UserPassword(cfg.DB.Username, cfg.DB.Password),
@@ -43,7 +42,7 @@ func New(cfg config.Config, logger *slog.Logger) *sql.DB {
 		logger.Error("error pinging database:", sl.Err(err))
 	}
 
-	logger.Info("Successfully connected to PostgreSQL via database/sql!")
+	logger.Info("successfully connected to PostgreSQL via database/sql!")
 
 	return db
 }
