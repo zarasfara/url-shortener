@@ -23,3 +23,10 @@ tasks:
       - echo "Rolling back migrations..."
       - docker run --rm -v ./migrations:/migrations --network host migrate/migrate -path=/migrations/ -database postgres://root:password@localhost:12000/pet_adoption_platform?sslmode=disable down -all
     silent: true
+
+  swag-fmt:
+    cmd: docker run --rm -v $(pwd):/code -u $(id -u):$(id -g) ghcr.io/swaggo/swag:latest fmt
+    silent: true
+    
+  swag-init:
+    cmd: docker run --rm -v $(pwd):/code/ -u $(id -u):$(id -g) ghcr.io/swaggo/swag:latest init -g cmd/url-shortener/main.go

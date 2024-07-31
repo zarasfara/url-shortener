@@ -1,0 +1,74 @@
+definitions:
+  handlers.HttpError:
+    properties:
+      message:
+        type: string
+    type: object
+  handlers.ShortenURL.RequestBody:
+    properties:
+      url:
+        type: string
+    type: object
+  handlers.ShortenURLResponse:
+    properties:
+      alias:
+        type: string
+      path:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: An application for shortening links.
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /{alias}:
+    get:
+      description: Redirects to the original full URL based on the shortened URL alias
+      parameters:
+      - description: Shortened URL alias
+        in: path
+        name: alias
+        required: true
+        type: string
+      responses:
+        "302":
+          description: Found
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.HttpError'
+      summary: Redirect to the full URL
+      tags:
+      - URL Redirect
+  /api/v1/shorten:
+    post:
+      consumes:
+      - application/json
+      description: Takes a URL and returns a shortened URL alias and QR code path
+      parameters:
+      - description: URL to be shortened
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.ShortenURL.RequestBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.ShortenURLResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.HttpError'
+      summary: Shorten a URL
+      tags:
+      - URL Shortener
+swagger: "2.0"

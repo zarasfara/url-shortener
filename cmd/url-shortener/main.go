@@ -1,12 +1,15 @@
 package main
 
 import (
-	urlshortener "github.com/zarasfara/url-shortener/internal/app/url-shortener"
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
+	_ "github.com/zarasfara/url-shortener/docs"
+	urlshortener "github.com/zarasfara/url-shortener/internal/app/url-shortener"
+
 	"log/slog"
+
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -15,6 +18,9 @@ const (
 	envProd  = "prod"
 )
 
+//	@title			Swagger Example API
+//	@description	An application for shortening links.
+//	@version		1.0
 func main() {
 	err := godotenv.Load()
 	if err != nil {

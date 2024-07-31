@@ -8,11 +8,14 @@ import (
 	"github.com/skip2/go-qrcode"
 )
 
-const uploadDirectory = "uploads"
+const (
+	uploadDirectory = "uploads"
+	qrCodeExtension = ".png"
+	qrCodeSize      = 256
+)
 
 // LocalStore is an implementation of the Store interface that saves QR codes locally.
-type LocalStore struct {
-}
+type LocalStore struct{}
 
 // NewLocalStore creates a new LocalStore with the given directory.
 func NewLocalStore() *LocalStore {
@@ -21,19 +24,18 @@ func NewLocalStore() *LocalStore {
 
 // Save saves the QR code data to a file and returns the file path.
 func (s *LocalStore) Save(alias, urlToSave string) (string, error) {
-	// Check if the directory exists
+	// Ensure the upload directory exists
 	if _, err := os.Stat(uploadDirectory); os.IsNotExist(err) {
-		// Create the directory
 		if err := os.MkdirAll(uploadDirectory, os.ModePerm); err != nil {
 			return "", fmt.Errorf("failed to create directory %s: %v", uploadDirectory, err)
 		}
 	}
 
 	// Generate the path to the QR code file
-	qrPath := filepath.Join(uploadDirectory, fmt.Sprintf("%s.png", alias))
+	qrPath := filepath.Join(uploadDirectory, fmt.Sprintf("%s%s", alias, qrCodeExtension))
 
 	// Generate and save the QR code
-	if err := qrcode.WriteFile(urlToSave, qrcode.Medium, 256, qrPath); err != nil {
+	if err := qrcode.WriteFile(urlToSave, qrcode.Medium, qrCodeSize, qrPath); err != nil {
 		return "", err
 	}
 
@@ -42,7 +44,7 @@ func (s *LocalStore) Save(alias, urlToSave string) (string, error) {
 
 // Get returns the file path of the QR code for the given alias.
 func (s *LocalStore) Get(alias string) (string, error) {
-	qrPath := filepath.Join(uploadDirectory, fmt.Sprintf("%s.png", alias))
+	qrPath := filepath.Join(uploadDirectory, fmt.Sprintf("%s%s", alias, qrCodeExtension))
 	if _, err := os.Stat(qrPath); os.IsNotExist(err) {
 		return "", fmt.Errorf("QR code with alias %s not found", alias)
 	}
@@ -51,7 +53,7 @@ func (s *LocalStore) Get(alias string) (string, error) {
 
 // Delete removes the QR code file for the given alias.
 func (s *LocalStore) Delete(alias string) error {
-	qrPath := filepath.Join(uploadDirectory, fmt.Sprintf("%s.png", alias))
+	qrPath := filepath.Join(uploadDirectory, fmt.Sprintf("%s%s", alias, qrCodeExtension))
 	if _, err := os.Stat(qrPath); os.IsNotExist(err) {
 		return fmt.Errorf("QR code with alias %s not found", alias)
 	}
