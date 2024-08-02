@@ -1,0 +1,8 @@
+env: "dev"
+
+http:
+  port: 8080
+  address: "localhost"
+
+db:
+  sslmode: "disable"

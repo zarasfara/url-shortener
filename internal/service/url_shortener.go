@@ -41,13 +41,13 @@ func (s *urlShortenerService) SaveUrl(url string) (string, error) {
 
 	alias, err := shortid.Generate()
 	if err != nil {
-		slog.Error("Failed to generate shortid", sl.Err(err))
+		slog.Error("Failed to generate shortid", sl.WithError(err))
 		return "", err
 	}
 
 	err = s.repo.SaveUrl(url, alias)
 	if err != nil {
-		slog.Error("Failed to save URL in repository", sl.Err(err))
+		slog.Error("Failed to save URL in repository", sl.WithError(err))
 		return "", err
 	}
 
@@ -57,7 +57,7 @@ func (s *urlShortenerService) SaveUrl(url string) (string, error) {
 func (s *urlShortenerService) GetUrl(shortUrl string) (string, error) {
 	url, err := s.repo.GetUrl(shortUrl)
 	if err != nil {
-		slog.Error("Failed to retrieve URL from repository", sl.Err(err))
+		slog.Error("Failed to retrieve URL from repository", sl.WithError(err))
 		return "", err
 	}
 	return url, nil

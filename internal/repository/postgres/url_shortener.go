@@ -32,11 +32,11 @@ func (us *UrlShortenerRepository) SaveUrl(url, alias string) error {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			if pgErr.Code == "23505" {
-				slog.Error("alias already exists", sl.Err(repoErrors.ErrAliasAlreadyExists))
+				slog.Error("alias already exists", sl.WithError(repoErrors.ErrAliasAlreadyExists))
 				return repoErrors.ErrAliasAlreadyExists
 			}
 		}
-		slog.Error("failed to execute save URL statement", sl.Err(err))
+		slog.Error("failed to execute save URL statement", sl.WithError(err))
 		return fmt.Errorf("%s: execute statement: %w", op, err)
 	}
 
@@ -48,7 +48,7 @@ func (us *UrlShortenerRepository) GetUrl(alias string) (string, error) {
 
 	stmt, err := us.db.Prepare("SELECT url FROM urls WHERE alias = $1")
 	if err != nil {
-		slog.Error("Failed to prepare statement", sl.Err(err))
+		slog.Error("Failed to prepare statement", sl.WithError(err))
 		return "", fmt.Errorf("%s: prepare statement: %w", op, err)
 	}
 	defer stmt.Close()
@@ -57,10 +57,10 @@ func (us *UrlShortenerRepository) GetUrl(alias string) (string, error) {
 	err = stmt.QueryRow(alias).Scan(&url)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			slog.Error("No rows found for alias", sl.Err(err))
+			slog.Error("No rows found for alias", sl.WithError(err))
 			return "", fmt.Errorf("%s: no rows found: %w", op, err)
 		}
-		slog.Error("Failed to execute get URL statement", sl.Err(err))
+		slog.Error("Failed to execute get URL statement", sl.WithError(err))
 		return "", fmt.Errorf("%s: execute statement: %w", op, err)
 	}
 

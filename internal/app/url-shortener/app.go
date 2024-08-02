@@ -20,13 +20,13 @@ import (
 	"github.com/zarasfara/url-shortener/internal/service"
 )
 
-func Run(env string, logger *slog.Logger) {
+func Run(env string) {
 	cfg := config.MustLoad(env)
-	logger.Info("starting url-shortener", slog.String("env", env))
-	logger.Debug("debug messages are enabled")
+	slog.Info("starting url-shortener", slog.String("env", env))
+	slog.Debug("debug messages are enabled")
 
 	// Init database: postgres
-	db := postgres.New(*cfg, logger)
+	db := postgres.New(*cfg)
 
 	// Init repositories
 	repos := repository.NewRepository(db)
@@ -44,10 +44,10 @@ func Run(env string, logger *slog.Logger) {
 	srv := server.NewServer(cfg, router)
 
 	go func() {
-		logger.Info("server is starting", slog.String("address", fmt.Sprintf("%s:%s", cfg.HTTP.Address, cfg.HTTP.Port)))
+		slog.Info("server is starting", slog.String("address", fmt.Sprintf("%s:%s", cfg.HTTP.Address, cfg.HTTP.Port)))
 
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			logger.Error("server failed to start", sl.Err(err))
+			slog.Error("server failed to start", sl.WithError(err))
 		}
 	}()
 
@@ -55,14 +55,14 @@ func Run(env string, logger *slog.Logger) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	logger.Info("shutting down server...")
+	slog.Info("shutting down server...")
 
 	// Create a deadline to wait for.
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		logger.Error("server forced to shutdown", sl.Err(err))
+		slog.Error("server forced to shutdown", sl.WithError(err))
 	}
 
-	logger.Info("server exiting")
+	slog.Info("server exiting")
 }
