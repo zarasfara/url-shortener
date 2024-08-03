@@ -17,9 +17,9 @@ const (
 	envProd  = "prod"
 )
 
-//	@title			Swagger Example API
-//	@description	An application for shortening links.
-//	@version		1.0
+// @title			Swagger Example API
+// @description	An application for shortening links.
+// @version		1.0
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -31,7 +31,7 @@ func main() {
 		env = envDev
 	}
 
-	logger.NewLogger(env)
+	logger.InitLogger(env)
 
 	urlshortener.Run(env)
 }

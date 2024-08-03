@@ -12,7 +12,7 @@ const (
 	envProd  = "prod"
 )
 
-func NewLogger(env string) {
+func InitLogger(env string) {
 	var handler slog.Handler
 
 	switch env {
