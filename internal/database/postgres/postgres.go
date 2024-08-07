@@ -17,7 +17,7 @@ const (
 	UrlsTable = "urls"
 )
 
-func New(cfg config.Config, logger *slog.Logger) *sql.DB {
+func New(cfg config.Config) *sql.DB {
 	connURL := &url.URL{
 		Scheme: "postgres",
 		User:   url.UserPassword(cfg.DB.Username, cfg.DB.Password),
@@ -30,7 +30,7 @@ func New(cfg config.Config, logger *slog.Logger) *sql.DB {
 
 	conn, err := pgx.Connect(context.Background(), connURL.String())
 	if err != nil {
-		logger.Error("unable to connect to database:", sl.Err(err))
+		slog.Error("unable to connect to database:", sl.WithError(err))
 	}
 
 	connConfig := conn.Config()
@@ -39,10 +39,10 @@ func New(cfg config.Config, logger *slog.Logger) *sql.DB {
 
 	err = db.Ping()
 	if err != nil {
-		logger.Error("error pinging database:", sl.Err(err))
+		slog.Error("error pinging database:", sl.WithError(err))
 	}
 
-	logger.Info("successfully connected to PostgreSQL via database/sql!")
+	slog.Info("successfully connected to PostgreSQL")
 
 	return db
 }

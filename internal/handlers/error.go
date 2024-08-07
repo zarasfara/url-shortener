@@ -10,7 +10,7 @@ type HttpError struct {
 	Message string `json:"message"`
 }
 
-// Method to create a new HttpError
+// NewHttpError create a new http error
 func NewHttpError(message string) *HttpError {
 	return &HttpError{
 		Message: message,

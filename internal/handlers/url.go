@@ -19,6 +19,7 @@ type ShortenURLResponse struct {
 }
 
 // ShortenURL godoc
+//
 //	@Summary		Shorten a URL
 //	@Description	Takes a URL and returns a shortened URL alias and QR code path
 //	@Tags			URL Shortener
@@ -37,13 +38,14 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	var requestBody RequestBody
 
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
-		slog.Error("Failed to decode request body", sl.Err(err))
+		slog.Error("Failed to decode request body", sl.WithError(err))
 		NewHttpError("Invalid request body").Write(w, http.StatusBadRequest)
 		return
 	}
 
 	if requestBody.URL == "" {
 		slog.Error("URL not provided")
+
 		NewHttpError("URL not provided").Write(w, http.StatusBadRequest)
 		return
 	}
@@ -51,11 +53,11 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	alias, err := h.services.UrlShortener.SaveUrl(requestBody.URL)
 	if err != nil {
 		if errors.Is(err, service.ErrInvalidURL) {
-			slog.Error("Invalid URL provided", sl.Err(err))
+			slog.Error("Invalid URL provided", sl.WithError(err))
 			NewHttpError("Invalid URL").Write(w, http.StatusBadRequest)
-			
+
 		} else {
-			slog.Error("Failed to save URL", sl.Err(err))
+			slog.Error("Failed to save URL", sl.WithError(err))
 			NewHttpError(http.StatusText(http.StatusInternalServerError)).Write(w, http.StatusInternalServerError)
 		}
 		return
@@ -63,7 +65,7 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 
 	path, err := h.services.QRCode.Save(alias, requestBody.URL)
 	if err != nil {
-		slog.Error("Failed to create QR code", sl.Err(err))
+		slog.Error("Failed to create QR code", sl.WithError(err))
 		NewHttpError(http.StatusText(http.StatusInternalServerError)).Write(w, http.StatusInternalServerError)
 		return
 	}
@@ -73,6 +75,7 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 }
 
 // Redirect godoc
+//
 //	@Summary		Redirect to the full URL
 //	@Description	Redirects to the original full URL based on the shortened URL alias
 //	@Tags			URL Redirect
@@ -85,7 +88,7 @@ func (h *Handler) Redirect(w http.ResponseWriter, r *http.Request) {
 
 	fullUrl, err := h.services.UrlShortener.GetUrl(shortUrl)
 	if err != nil {
-		slog.Error("Failed to get URL", sl.Err(err))
+		slog.Error("Failed to get URL", sl.WithError(err))
 		NewHttpError(http.StatusText(http.StatusInternalServerError)).Write(w, http.StatusInternalServerError)
 		return
 	}
