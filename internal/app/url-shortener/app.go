@@ -27,6 +27,7 @@ func Run(env string) {
 
 	// Init database: postgres
 	db := postgres.New(*cfg)
+	defer db.Close()
 
 	// Init repositories
 	repos := repository.NewRepository(db)
